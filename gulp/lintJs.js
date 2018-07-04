@@ -29,9 +29,9 @@ gulp.task('lintJs', function (cb) {
           for (j = 0; j < fileResults.messages.length; j++) {
             stats = fileResults.messages[j]
             if (stats.severity === 2) {
-              console.error('  ' + colors.gray(stats.line + ':' + stats.column) + colors.red(' error ') + stats.message)
+              console.error('  ' + colors.grey(stats.line + ':' + stats.column) + colors.red(' error ') + stats.message)
             } else {
-              console.error('  ' + colors.gray(stats.line + ':' + stats.column) + colors.yellow(' warning ') + stats.message)
+              console.error('  ' + colors.grey(stats.line + ':' + stats.column) + colors.yellow(' warning ') + stats.message)
             }
             errorCount++
           }
