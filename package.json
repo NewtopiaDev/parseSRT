@@ -1,6 +1,6 @@
 {
-  "name": "parse-srt",
-  "version": "1.0.0-alpha",
+  "name": "srt-to-json",
+  "version": "1.0.0",
   "description": "Parse and convert SRT subtitles into JSON format.",
   "main": "build/parse-srt.js",
   "jsnext:main": "src/parse-srt.js",
@@ -11,11 +11,12 @@
     "build/parse-srt.min.js"
   ],
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "start": "gulp"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MrSlide/parseSRT.git"
+    "url": "git+https://github.com/NewtopiaDev/parseSRT.git"
   },
   "keywords": [
     "srt",
@@ -27,12 +28,12 @@
     "json"
   ],
   "author": {
-    "name": "Luis Rodrigues",
-    "url": "http://www.luisrodriguesweb.com"
+    "name": "Newtopia Inc",
+    "url": "http://www.newtopia.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MrSlide/parseSRT/issues"
+    "url": "https://github.com/NewtopiaDev/parseSRT/issues"
   },
   "standard": {
     "parser": "babel-eslint"
