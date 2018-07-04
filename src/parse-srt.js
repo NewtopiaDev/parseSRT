@@ -151,7 +151,9 @@ export default function parseSRT (data = '', options = { propName: {} }) {
     // Modified version of regex from Phil Haack's blog: http://haacked.com/archive/2004/10/25/usingregularexpressionstomatchhtml.aspx
     // Later modified by kev: http://kevin.deldycke.com/2007/03/ultimate-regular-expression-for-html-tag-parsing-with-php/
     sub[textPropName] = sub[textPropName].replace(/&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w\-]*\w)(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)(\/?)&gt;/gi, '<$1$3$7>')
-    sub[textPropName] = sub[textPropName].replace(/\\N/gi, '<br />')
+    
+    if (!options.ignoreLineBreaks) sub[textPropName] = sub[textPropName].replace(/\\N/gi, '<br />')
+    else sub[textPropName] = sub[textPropName].replace(/\\N/gi, '')
 
     subs.push(sub)
   }

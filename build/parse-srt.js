@@ -4,15 +4,6 @@
   (global.parseSRT = factory());
 }(this, (function () { 'use strict';
 
-/**
- * @name parseSRT
- * @desc Parses and converts SRT subtitle data into JSON format. Adapted from the popcorn.js SRT parser plugin.
- * @see http://popcornjs.org/
- * @author Luis Rodrigues (http://www.luisrodriguesweb.com)
- * @version 1.0.0-alpha
- * @license MIT
- */
-
 function toSeconds(time) {
   var t = time.split(':');
 
@@ -89,7 +80,8 @@ function parseSRT() {
     sub[textPropName] = sub[textPropName].replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     sub[textPropName] = sub[textPropName].replace(/&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w\-]*\w)(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)(\/?)&gt;/gi, '<$1$3$7>');
-    sub[textPropName] = sub[textPropName].replace(/\\N/gi, '<br />');
+
+    if (!options.ignoreLineBreaks) sub[textPropName] = sub[textPropName].replace(/\\N/gi, '<br />');else sub[textPropName] = sub[textPropName].replace(/\\N/gi, '');
 
     subs.push(sub);
   }
