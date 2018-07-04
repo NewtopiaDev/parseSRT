@@ -18,6 +18,14 @@
  */
 
 /**
+ * @typedef {Options}
+ * @property {Boolean} timeInText - Leave timestamp in text format.
+ * @property {String=} propName.start - Prop name in response object for start.
+ * @property {String=} propName.end - Prop name in response object for end.
+ * @property {String=} propName.text - Prop name in response object for text.
+ */
+
+/**
  * Convert a HH:MM:SS,MMM or HH:MM:SS.MMM time format into seconds.
  *
  * @private
@@ -81,6 +89,7 @@ function lastNonEmptyLine (linesArray) {
  *
  * @public
  * @param {String} data - The SRT file contents.
+ * @param {Object} options - Options for the conversion.
  * @return {Array<JSONSubtitle>} - The subtitles in a JSON format.
  *
  * @example
@@ -96,7 +105,7 @@ function lastNonEmptyLine (linesArray) {
  *
  * var subtitles = parseSRT(data)
  */
-export default function parseSRT (data = '') {
+export default function parseSRT (data = '', options = { propName: {} }) {
   // declare needed variables and constants
   const subs = []
   const lines = data.split(/(?:\r\n|\r|\n)/gm)
@@ -116,32 +125,33 @@ export default function parseSRT (data = '') {
     // Split on '-->' delimiter, trimming spaces as well
     time = lines[i++].split(/[\t ]*-->[\t ]*/)
 
-    sub.start = toSeconds(time[0])
+    sub[options.propName.start || 'start'] = options.timeInText ? time[0] : toSeconds(time[0])
 
     // So as to trim positioning information from end
     idx = time[1].indexOf(' ')
     if (idx !== -1) {
       time[1] = time[1].substr(0, idx)
     }
-    sub.end = toSeconds(time[1])
+    sub[options.propName.end || 'end'] = options.timeInText ? time[1] : toSeconds(time[1])
 
     // Build single line of text from multi-line subtitle in file
     while (i < endIdx && lines[i]) {
       text.push(lines[i++])
     }
 
+    const textPropName = options.propName.text || 'text'
     // Join into 1 line, SSA-style linebreaks
     // Strip out other SSA-style tags
-    sub.text = text.join('\\N').replace(/\{(\\[\w]+\(?([\w\d]+,?)+\)?)+\}/gi, '')
+    sub[textPropName] = text.join('\\N').replace(/\{(\\[\w]+\(?([\w\d]+,?)+\)?)+\}/gi, '')
 
     // Escape HTML entities
-    sub.text = sub.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    sub[textPropName] = sub[textPropName].replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
     // Unescape great than and less than when it makes a valid html tag of a supported style (font, b, u, s, i)
     // Modified version of regex from Phil Haack's blog: http://haacked.com/archive/2004/10/25/usingregularexpressionstomatchhtml.aspx
     // Later modified by kev: http://kevin.deldycke.com/2007/03/ultimate-regular-expression-for-html-tag-parsing-with-php/
-    sub.text = sub.text.replace(/&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w\-]*\w)(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)(\/?)&gt;/gi, '<$1$3$7>')
-    sub.text = sub.text.replace(/\\N/gi, '<br />')
+    sub[textPropName] = sub[textPropName].replace(/&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w\-]*\w)(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)(\/?)&gt;/gi, '<$1$3$7>')
+    sub[textPropName] = sub[textPropName].replace(/\\N/gi, '<br />')
 
     subs.push(sub)
   }

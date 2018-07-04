@@ -51,6 +51,7 @@ function lastNonEmptyLine(linesArray) {
 
 function parseSRT() {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { propName: {} };
 
   var subs = [];
   var lines = data.split(/(?:\r\n|\r|\n)/gm);
@@ -69,24 +70,26 @@ function parseSRT() {
 
     time = lines[i++].split(/[\t ]*-->[\t ]*/);
 
-    sub.start = toSeconds(time[0]);
+    sub[options.propName.start || 'start'] = options.timeInText ? time[0] : toSeconds(time[0]);
 
     idx = time[1].indexOf(' ');
     if (idx !== -1) {
       time[1] = time[1].substr(0, idx);
     }
-    sub.end = toSeconds(time[1]);
+    sub[options.propName.end || 'end'] = options.timeInText ? time[1] : toSeconds(time[1]);
 
     while (i < endIdx && lines[i]) {
       text.push(lines[i++]);
     }
 
-    sub.text = text.join('\\N').replace(/\{(\\[\w]+\(?([\w\d]+,?)+\)?)+\}/gi, '');
+    var textPropName = options.propName.text || 'text';
 
-    sub.text = sub.text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    sub[textPropName] = text.join('\\N').replace(/\{(\\[\w]+\(?([\w\d]+,?)+\)?)+\}/gi, '');
 
-    sub.text = sub.text.replace(/&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w\-]*\w)(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)(\/?)&gt;/gi, '<$1$3$7>');
-    sub.text = sub.text.replace(/\\N/gi, '<br />');
+    sub[textPropName] = sub[textPropName].replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    sub[textPropName] = sub[textPropName].replace(/&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w\-]*\w)(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)(\/?)&gt;/gi, '<$1$3$7>');
+    sub[textPropName] = sub[textPropName].replace(/\\N/gi, '<br />');
 
     subs.push(sub);
   }
