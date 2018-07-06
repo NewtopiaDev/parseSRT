@@ -1,6 +1,6 @@
 {
   "name": "srt-to-json",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parse and convert SRT subtitles into JSON format.",
   "main": "build/parse-srt.js",
   "jsnext:main": "src/parse-srt.js",
